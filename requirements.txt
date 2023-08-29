@@ -13,7 +13,7 @@ kiwisolver==1.4.5
 lazy-object-proxy==1.9.0
 matplotlib==3.7.2
 mccabe==0.7.0
-numpy==1.24.4
+numpy==1.25.2
 packaging==23.1
 Pillow==10.0.0
 platformdirs==3.10.0
