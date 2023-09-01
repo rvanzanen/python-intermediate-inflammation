@@ -87,3 +87,71 @@ def patient_normalise(data):
     normalised[np.isnan(normalised)] = 0
     return normalised
 
+
+def daily_above_threshold(patient_num, data, threshold):
+    """Count how many days a given patient's inflammation exceeds a given threshold.
+
+    :param patient_num: The patient row number
+    :param data: A 2D data array with inflammation data
+    :param threshold: An inflammation threshold to check each daily value against
+    :returns: An integer representing the number of days a patient's inflammation is over a given threshold
+    """
+    def count_above_threshold(a, b):
+        if b:
+            return a + 1
+        else:
+            return a
+    # Use map to determine if each daily inflammation value exceeds a given threshold for a patient
+    above_threshold = map(lambda x: x > threshold, data[patient_num])
+    # Use reduce to count on how many days inflammation was above the threshold for a patient
+    return reduce(count_above_threshold, above_threshold, 0)
+
+
+def attach_names(data, names):
+    """Create datastructure containing patient records."""
+    assert len(data) == len(names)
+    output = []
+
+    for data_row, name in zip(data, names):
+        output.append({'name': name,
+                       'data': data_row})
+
+    return output
+
+class Observation:
+    def __init__(self, day, value):
+        self.day = day
+        self.value = value
+
+    def __str__(self):
+        return self.value
+
+class Person:
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+class Patient(Person):
+    """A patient in an inflammation study."""
+    def __init__(self, name, observations=None):
+        super().__init__(name)
+
+        self.observations = []
+        if observations is not None:
+            self.observations = observations
+
+    def add_observation(self, value, day=None):
+        if day is None:
+            try:
+                day = self.observations[-1].day + 1
+
+            except IndexError:
+                day = 0
+
+        new_observation = Observation(day, value)
+
+        self.observations.append(new_observation)
+        return new_observation
+
